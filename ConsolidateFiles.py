@@ -4,15 +4,19 @@ import operator
 import os
 import sys
 import shutil
+import random
 
-image_exts = ['jpg', 'png', 'gif']
-video_exts = ['mp4', '3gp', 'wmv', 'avi', 'mpg', 'mpeg', 'flv', 'webm']
+image_exts = ['jpg', 'png', 'gif', 'jpeg', 'bmp']
+video_exts = ['mp4', '3gp', 'wmv', 'avi', 'mpg', 'mpeg', 'flv', 'webm', 'mov', 'mkv', 'divx', 'f4v', 'm4v', '3gpp', 'vob', 'rmvb']
+archive_exts = ['txt', 'py', 'ps1', 'rar', 'md']
+remove_files = [".DS_Store", "Thumbs.db"]
 
 
 def get_file_extensions(search_path):
     dirs = 0
     images = 0
     videos = 0
+    archives = 0
     total = 0
     extensions = {}
     paths = [search_path]
@@ -24,15 +28,14 @@ def get_file_extensions(search_path):
         for name in os.listdir(working_path):
             if name.startswith('.'):
                 continue
-            name = name.lower()
             fullname = os.path.join(working_path, name)
             if os.path.isdir(fullname):
                 dirs += 1
                 paths.append(fullname)
             else:
-                tokens = fullname.split('.')
+                tokens = name.split('.')
                 if len(tokens) > 1:
-                    ext = tokens[-1]
+                    ext = tokens[-1].lower()
                     if not extensions.has_key(ext):
                         extensions[ext] = 0
                     extensions[ext] += 1
@@ -42,6 +45,8 @@ def get_file_extensions(search_path):
                         images += 1
                     elif ext in video_exts:
                         videos += 1
+                    elif ext in archive_exts:
+                    	archives += 1
                     else:
                         if not ext in unknown_exts:
                             unknown_exts.append(ext)
@@ -49,7 +54,8 @@ def get_file_extensions(search_path):
     print "Directories found: %d." % dirs
     print "Images found: %d." % images
     print "Videos found: %d." % videos
-    print "Total files: %d. Missing files: %d." % (total, total - videos - images)
+    print "Archives found: %d." % archives
+    print "Total files: %d. Missing files: %d." % (total, total - videos - images - archives)
     if len(unknown_exts) > 0:
         print "Unknown file types: ",
         print unknown_exts
@@ -60,6 +66,7 @@ def move_files(search_path, dest_path):
     paths = [search_path]
     image_path = os.path.join(dest_path, "images")
     video_path = os.path.join(dest_path, "videos")
+    archive_path = os.path.join(dest_path, "archive")
 
     while len(paths) > 0:
         working_path = paths[0]
@@ -67,19 +74,20 @@ def move_files(search_path, dest_path):
         for name in os.listdir(working_path):
             if name.startswith('.'):
                 continue
-            name = name.lower()
             fullname = os.path.join(working_path, name)
             if os.path.isdir(fullname):
                 paths.append(fullname)
             else:
-                tokens = fullname.split('.')
+                tokens = name.split('.')
                 if len(tokens) > 1:
-                    ext = tokens[-1]
+                    ext = tokens[-1].lower()
 
                     if ext in image_exts:
                         move_path = image_path
                     elif ext in video_exts:
                         move_path = video_path
+                    elif ext in archive_exts:
+                    	move_path = archive_path
                     else:
                         print "Unknown file %s" % fullname
                         continue
@@ -91,6 +99,14 @@ def move_files(search_path, dest_path):
                         if os.stat(fullname).st_size == os.stat(dest_finame).st_size:
                             print "Remove file %s" % fullname
                             os.remove(fullname)
+                        else:
+                            basename = os.path.basename(fullname)
+                            name_tokens = os.path.splitext(fullname)
+                            random_token = "_" + str(random.randint(100000, 999999))
+                            new_basename = name_tokens[0] + random_token + name_tokens[1]
+                            new_filename = os.path.join(os.path.dirname(fullname), new_basename)
+                            os.rename(fullname, new_filename)
+                            shutil.move(new_filename, move_path)
                     else:
                         shutil.move(fullname, move_path)
 
@@ -104,12 +120,12 @@ def remove_empty_dirs(search_path):
         for name in os.listdir(working_path):
             if name.startswith('.'):
                 continue
-            name = name.lower()
             fullname = os.path.join(working_path, name)
             if os.path.isdir(fullname):
                 paths.append(fullname)
-                if os.path.exists(os.path.join(fullname, ".DS_Store")):
-                    os.remove(os.path.join(fullname, ".DS_Store"))
+                for file_remove in remove_files:
+	                if os.path.exists(os.path.join(fullname, file_remove)):
+	                    os.remove(os.path.join(fullname, file_remove))
                 if len(os.listdir(fullname)) == 0:
                     paths_to_remove.append(fullname)
 
