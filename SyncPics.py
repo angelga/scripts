@@ -11,8 +11,8 @@ ignore_extensions = ["aae"]
 class Picture:
 
     def __init__(self, path, filename, size):
-        self.path = path.lower()
-        self.filename = filename.lower()
+        self.path = path
+        self.filename = filename
         self.size = size
 
     def __eq__(self, other):
@@ -30,7 +30,6 @@ def get_files(path):
         working_path = paths[0]
         paths.remove(working_path)
         for filename in os.listdir(working_path):
-            filename = filename.lower()
             full_filename = os.path.join(working_path, filename)
 
             if filename.startswith('.'):
@@ -62,14 +61,12 @@ if __name__ == '__main__':
         sys.exit()
 
     source = sys.argv[1]
-    source = source.lower()
 
     if not os.path.exists(source):
         print "Source path doesn't exist"
         sys.exit()
 
     destination = sys.argv[2]
-    destination = destination.lower()
 
     if not os.path.exists(destination):
         print "Destination path doesn't exist"
