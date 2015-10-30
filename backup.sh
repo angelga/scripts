@@ -2,7 +2,10 @@
 #
 # Backup personal files
 #
-# find . -depth -mindepth 1 -maxdepth 1 -exec rm -rf {} \;
+# Run for deleting test destination path:
+#
+#	find . -depth -mindepth 1 -maxdepth 1 -exec rm -rf {} \;
+#
 
 if [ "$#" -ne 1 ]; then
 	echo "Usage: backup.sh destination_path"
@@ -26,10 +29,11 @@ fi
 echo "Archiving to $DEST_PATH"
 pushd ~
 
-echo "Archiving Keychains"
+echo "Archiving system keychains"
 sudo cp "/Library/Keychains/System.keychain" "/var/db/SystemKey" $DEST_PATH
 sudo chown $USER "$DEST_PATH/System.keychain" "$DEST_PATH/SystemKey"
 
+echo "Archiving user keychains"
 sudo find /Users -type d -mindepth 1 -maxdepth 1 -not -iname "shared" -exec sh -c \
 	'dirname_only=`basename "$0"`; mkdir "$1"/$dirname_only; \
 	cp "$0"/Library/Keychains/*.keychain "$1"/$dirname_only; \
@@ -42,5 +46,5 @@ rsync -a ~/.bash_profile "$DEST_PATH"
 rsync -a ~/.inputrc "$DEST_PATH"
 rsync -a ~/.ssh "$DEST_PATH"
 
-echo "Done"
+echo "Archiving ... done"
 popd
