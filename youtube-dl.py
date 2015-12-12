@@ -8,13 +8,18 @@ import sys
 if __name__ == '__main__':
     print 'Number of arguments:', len(sys.argv), 'arguments.'
     print 'Argument List:', str(sys.argv)
+    usage = "Usage: youtube-dl.py url"
 
     if len(sys.argv) != 2:
-        print "Usage: youtube-dl.py url"
+        print usage
         sys.exit()
 
     # Parse URL to later remove unwanted list ids, index, etc.
     url = sys.argv[1]
+    if not url:
+    	print usage
+    	sys.exit(2)
+
     parsed_url = urlparse.urlparse(url)
     video_id = urlparse.parse_qs(parsed_url.query)['v'][0]
 

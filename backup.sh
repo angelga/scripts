@@ -46,5 +46,18 @@ rsync -a ~/.bash_profile "$DEST_PATH"
 rsync -a ~/.inputrc "$DEST_PATH"
 rsync -a ~/.ssh "$DEST_PATH"
 
+echo "Archiving github repos"
+rsync -a ~/github "$DEST_PATH"
+
+echo "Archiving Desktop & Downloads"
+rsync -a ~/Downloads "$DEST_PATH"
+rsync -a ~/Desktop "$DEST_PATH"
+
+echo "Archiving sync folder"
+rsync -a ~/sync "$DEST_PATH"
+
+echo "Archiving external drive"
+rsync -a /Volumes/EXT "$DEST_PATH"
+
 echo "Archiving ... done"
 popd
