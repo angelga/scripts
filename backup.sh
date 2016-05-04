@@ -84,6 +84,7 @@ rsync -a ~/.inputrc "$DEST_PATH"
 rsync -a ~/.bash_profile "$DEST_PATH"
 rsync -a ~/.screenrc "$DEST_PATH"
 rsync -a ~/.ssh "$DEST_PATH"
+rsync -a ~/virtualenvs "$DEST_PATH"
 
 echo "Archiving github repos"
 rsync -a ~/github "$DEST_PATH"
@@ -100,9 +101,6 @@ rsync -a ~/Desktop "$DEST_PATH"
 
 echo "Archiving sync folder"
 rsync -a ~/sync "$DEST_PATH"
-
-echo "Archiving external drive"
-rsync -a /Volumes/EXT "$DEST_PATH"
 
 printf "%s\n" "${grn}Archiving ... done${end}"
 popd
