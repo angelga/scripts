@@ -82,13 +82,19 @@ echo "Archiving dot files"
 #TODO don't overwrite if existing
 rsync -a ~/.inputrc "$DEST_PATH"
 rsync -a ~/.bash_profile "$DEST_PATH"
+rsync -a ~/.bashrc "$DEST_PATH"
 rsync -a ~/.screenrc "$DEST_PATH"
 rsync -a ~/.ssh "$DEST_PATH"
+rsync -a ~/.vimrc "$DEST_PATH"
 rsync -a ~/virtualenvs "$DEST_PATH"
 
 echo "Archiving github repos"
+du -sh ~/github
 rsync -a ~/github "$DEST_PATH"
 
+echo "Archiving sync folder"
+du -sh ~/sync
+rsync -a ~/sync "$DEST_PATH"
 
 if [ $QUICK ]; then
 	printf "%s\n" "${grn}Quick backup completed${end}"
@@ -96,11 +102,10 @@ if [ $QUICK ]; then
 fi
 
 echo "Archiving Desktop & Downloads"
+du -sh ~/Downloads
 rsync -a ~/Downloads "$DEST_PATH"
+du -sh ~/Desktop
 rsync -a ~/Desktop "$DEST_PATH"
-
-echo "Archiving sync folder"
-rsync -a ~/sync "$DEST_PATH"
 
 printf "%s\n" "${grn}Archiving ... done${end}"
 popd
